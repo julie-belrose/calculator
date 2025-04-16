@@ -4,10 +4,6 @@ document.addEventListener("DOMContentLoaded",()=>{
     let stashValue = null;
     let mod = null;
 
-    const getValueResult = (value) => {
-        return Number(value);
-    };
-
     const getModifier = (modifier, newValue)=>{
         switch (modifier) {
             case 'C':
@@ -34,8 +30,8 @@ document.addEventListener("DOMContentLoaded",()=>{
                 break;
 
             case '=':
+                console.log(`Operateur ${mod}`);
                 getResultTotal(currentValue, stashValue, mod);
-                console.log(`Operateur =`);
                 break;
             }
     };
@@ -44,11 +40,11 @@ const getResultTotal =(currentVal, stashValue, mod)=> {
 
     console.log(`${currentVal} ${stashValue} ${mod} `);
 
+    let result;
     if (!currentVal || !stashValue || !mod) {
-        return;
+        return result = 0;
     }
 
-    let result;
     const a = Number(stashValue);
     const b = Number(currentVal);
 
@@ -58,7 +54,7 @@ const getResultTotal =(currentVal, stashValue, mod)=> {
         case 'X': result = a * b; break;
         case '/': result = b !== 0 ? a / b : 'error'; break;
         default:
-            result = 'error';
+            result = 'Error'
             break;
     }
 
