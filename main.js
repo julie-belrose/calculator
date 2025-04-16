@@ -8,73 +8,61 @@ document.addEventListener("DOMContentLoaded",()=>{
         return Number(value);
     };
 
-    // const getValueStash = (stashValue, value ) =>{
-    //
-    //     stashValue = false;
-    //
-    //     //return value;
-    // };
-
     const getModifier = (modifier, newValue)=>{
         switch (modifier) {
             case 'C':
-                newValue = 0;
+                currentValue = 0;
+                console.log("Reset");
                 break;
             case '+/-':
                 stashValue = -newValue; //inverse value with sign -
+                console.log("Inversion de signe :", currentValue);
                 break;
             case '%':
                 mod = '%'
                 stashValue = newValue / 100;
+                console.log("Pourcentage :", stashValue);
                 break;
 
             case '/':
-                mod= '/';
-                if (!stashValue){
-                    stashValue = 0;
-                } else {
-                    stashValue += stashValue;
-                }
-                break;
-
             case '+':
-                mod = '+';
-                if (!stashValue){
-                    stashValue = 0;
-                } else {
-                    stashValue += stashValue;
-                }
-                break;
-
             case 'X':
-                mod = 'X';
-                if (!stashValue){
-                    stashValue = 0;
-                } else {
-                    stashValue += stashValue;
-                }
+                mod = modifier;
+                stashValue = newValue;
+                currentValue = '';
+                console.log(`Opérateur "${mod}" stocké avec stash = ${stashValue}`);
                 break;
 
             case '=':
-                mod = '=';
                 getResultTotal(currentValue, stashValue, mod);
+                console.log(`Operateur =`);
+                break;
             }
-        }
     };
 
 const getResultTotal =(currentVal, stashValue, mod)=> {
-    let result = 0;
+
+    console.log(`${currentVal} ${stashValue} ${mod} `);
+
+    if (!currentVal || !stashValue || !mod) {
+        return;
+    }
+
+    let result;
+    const a = Number(stashValue);
+    const b = Number(currentVal);
+
     switch (mod) {
-        case '+': result = currentVal + stashValue;
-        break;
-        case '-': result = currentVal - stashValue;
-        break;
-        case 'X': result= currentVal * stashValue;
-        break;
-        case '/': result = stashValue !== 0 ? currentVal / stashValue : 'error';
+        case '+': result = a + b; break;
+        case '-': result = a - b; break;
+        case 'X': result = a * b; break;
+        case '/': result = b !== 0 ? a / b : 'error'; break;
+        default:
+            result = 'error';
             break;
     }
 
+    console.log(`Résultat de ${currentVal} ${mod} ${stashValue} =`, result);
     currentValue = String(result);
     stashValue = '';
     mod = null;
@@ -95,34 +83,26 @@ const getResultTotal =(currentVal, stashValue, mod)=> {
 
                 console.log(`Value: ${value}, Type: ${type}`);
 
-                // Tu peux ensuite router selon le type
-                let newValue =  getValueResult();
-
                 switch (type) {
                     case 'number':
-                        // traiter les chiffres
-                        if (newValue){
-                            newValue = newValue + value;
-                            getValueResult(newValue);
-                        } else {
-                            newValue = initValue + value;
-                        }
-
+                        currentValue += value;
+                        console.log("Valeur courante :", currentValue);
                         break;
                     case 'float':
-                        newValue = value + '.'
-                        // gérer le point décimal
+                        if (!currentValue.includes('.')) {
+                            currentValue += currentValue ? '.' : '0.';
+                        }
+                        console.log("Float ajouté :", currentValue);
                         break;
                     case 'modifier':
-                        // backspace, enter, etc.
-                        getModifier(value, newValue);
+                        getModifier(value, Number(currentValue));
                         break;
                 }
             });
         });
     };
 
-    listenToKeyboardButtons()
+    listenToKeyboardButtons();
 
 })
 
@@ -142,7 +122,4 @@ const getResultTotal =(currentVal, stashValue, mod)=> {
 
 //another function
 //keep value in screen and send value for all options
-
-
-console.log("dés le debut")
 
