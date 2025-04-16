@@ -21,11 +21,11 @@ document.addEventListener("DOMContentLoaded",()=>{
                 newValue = 0;
                 break;
             case '+/-':
-                newValue = -newValue; //inverse value with sign -
+                stashValue = -newValue; //inverse value with sign -
                 break;
             case '%':
                 mod = '%'
-                newValue = newValue / 100;
+                stashValue = newValue / 100;
                 break;
 
             case '/':
@@ -62,7 +62,22 @@ document.addEventListener("DOMContentLoaded",()=>{
         }
     };
 
-const = getResultTotal =()=> {
+const getResultTotal =(currentVal, stashValue, mod)=> {
+    let result = 0;
+    switch (mod) {
+        case '+': result = currentVal + stashValue;
+        break;
+        case '-': result = currentVal - stashValue;
+        break;
+        case 'X': result= currentVal * stashValue;
+        break;
+        case '/': result = stashValue !== 0 ? currentVal / stashValue : 'error';
+            break;
+    }
+
+    currentValue = String(result);
+    stashValue = '';
+    mod = null;
 }
 
     const listenToKeyboardButtons= () => {
