@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded",()=>{
     const getModifier = (modifier, newValue)=>{
         switch (modifier) {
             case 'C':
+                mod = 'C';
                 currentValue = 0;
                 console.log("Reset");
                 break;
@@ -26,7 +27,7 @@ document.addEventListener("DOMContentLoaded",()=>{
                 mod = modifier;
                 stashValue = newValue;
                 currentValue = '';
-                console.log(`Opérateur "${mod}" stocké avec stash = ${stashValue}`);
+                console.log(`Opérateur "${mod}" stocké avec stash = ${stashValue} et currentValue ${currentValue}`);
                 break;
 
             case '=':
@@ -41,26 +42,37 @@ const getResultTotal =(currentVal, stashValue, mod)=> {
     console.log(`${currentVal} ${stashValue} ${mod} `);
 
     let result;
-    if (!currentVal || !stashValue || !mod) {
+
+    if (mod === 'C') {
+        result = 0;
+        currentValue = '';
+        stashValue = '';
+        mod = null;
+        console.log('RESET ask, result = 0');
+        return result;
+    }
+
+    if (!currentVal &&  !mod) {
         return result = 0;
+    } else if (currentVal && stashValue && mod) {
+        const a = Number(stashValue);
+        const b = Number(currentVal);
+
+        switch (mod) {
+            case 'C': result = 0; break
+            case '+': result = a + b; break;
+            case '-': result = a - b; break;
+            case 'X': result = a * b; break;
+            case '/': result = b !== 0 ? a / b : 'error'; break;
+            default:
+                result = 'Error'
+                break;
+        }
     }
 
-    const a = Number(stashValue);
-    const b = Number(currentVal);
-
-    switch (mod) {
-        case '+': result = a + b; break;
-        case '-': result = a - b; break;
-        case 'X': result = a * b; break;
-        case '/': result = b !== 0 ? a / b : 'error'; break;
-        default:
-            result = 'Error'
-            break;
-    }
-
-    console.log(`Résultat de ${currentVal} ${mod} ${stashValue} =`, result);
-    currentValue = String(result);
-    stashValue = '';
+    console.log(`Résultat total , ${result}`);
+    currentValue = String(result);  // on garde le résultat pour la suite
+    stashValue = '';                // on vide la stash (elle sera re-remplie si besoin)
     mod = null;
 }
 
@@ -81,8 +93,13 @@ const getResultTotal =(currentVal, stashValue, mod)=> {
 
                 switch (type) {
                     case 'number':
-                        currentValue += value;
-                        console.log("Valeur courante :", currentValue);
+                        if (mod === null) {
+                            currentValue += value;
+                            console.log("Valeur validée :", currentValue);
+                        } else {
+                            currentValue += value;
+                            console.log("Valeur en cours :", currentValue);
+                        }
                         break;
                     case 'float':
                         if (!currentValue.includes('.')) {
